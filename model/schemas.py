@@ -7,7 +7,7 @@ class UserReg(BaseModel):
     email: str
 
     class Config:
-        orm_mode=True
+        from_attributes = True
 
 
 class Posts(BaseModel):
@@ -15,14 +15,14 @@ class Posts(BaseModel):
     description: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class Category(BaseModel):
     category_name: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserModify(BaseModel):
@@ -30,4 +30,4 @@ class UserModify(BaseModel):
     description: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
