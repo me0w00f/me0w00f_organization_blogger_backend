@@ -12,7 +12,7 @@ import time
 
 def create_user(UserReg: schemas.UserReg, db: Session) -> dict | bool:
     """
-    Create a user with information provided in database.
+    Create a user with information provided in the database.
     :param UserReg: Information to sign up.
     :param db: Session of database.
     :return: Result of operation.
@@ -154,13 +154,16 @@ def get_user_by_uuid(db: Session, user_uuid: str):
 
 def get_admin_by_name(db: Session, admin_name: str):
     """
-    Get an admin from the database by their user name.
+    Get an admin from the database by their username.
     :param db: Session of database.
     :param admin_name: The name of the admin.
     :return: The admin if they exist, None otherwise.
     """
 
-    return db.query(models.User).filter(models.User.user_name == admin_name, models.User.administrator == True).first()
+    return db.query(models.User).filter(
+        models.User.user_name == admin_name,
+        models.User.administrator == True
+    ).first()
 
 
 def get_admin_by_uuid(db: Session, admin_uuid: str):
@@ -171,4 +174,7 @@ def get_admin_by_uuid(db: Session, admin_uuid: str):
     :return: The admin if they exist, None otherwise.
     """
 
-    return db.query(models.User).filter(models.User.user_uuid == admin_uuid, models.User.administrator == True).first()
+    return db.query(models.User).filter(
+        models.User.user_uuid == admin_uuid,
+        models.User.administrator == True
+    ).first()
