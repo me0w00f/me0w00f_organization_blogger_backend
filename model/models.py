@@ -1,4 +1,4 @@
-from sqlalchemy import Column, INT, VARCHAR, TEXT, DATETIME
+from sqlalchemy import Column, INT, VARCHAR, TEXT, DATETIME, BOOLEAN
 
 from dependencies.db import Base
 
@@ -13,6 +13,7 @@ class User(Base):
     password = Column(TEXT, nullable=False)
     email = Column(VARCHAR(64), unique=True, nullable=False)
     description = Column(TEXT, nullable=False, default="这个人很懒，什么都没有留下。")
+    administrator = Column(BOOLEAN, nullable=False, default=False)
     date = Column(DATETIME, nullable=False)
 
 

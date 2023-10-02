@@ -1,3 +1,6 @@
+# encoding: utf-8
+# Filename: main.py
+
 """
 Main entrance.
 

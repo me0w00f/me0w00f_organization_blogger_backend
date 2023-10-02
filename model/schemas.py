@@ -10,6 +10,14 @@ class UserReg(BaseModel):
         from_attributes = True
 
 
+class UserLogin(BaseModel):
+    user_name: str
+    password: str
+
+    class Config:
+        from_attributes = True
+
+
 class Posts(BaseModel):
     title: str
     description: str
