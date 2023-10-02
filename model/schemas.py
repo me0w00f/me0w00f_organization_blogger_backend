@@ -1,3 +1,6 @@
+# encoding: utf-8
+# Filename: schemas.py
+
 from pydantic import BaseModel
 
 
