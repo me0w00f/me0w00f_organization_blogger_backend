@@ -1,3 +1,6 @@
+# encoding: utf-8
+# Filename: crud.py
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from uuid import uuid4
@@ -75,9 +78,32 @@ def create_admin(db: Session, AdminReg: schemas.UserReg) -> dict:
     :return: Result of operation.
     """
 
+    # Check if user exists
+    existing_admin = get_admin_by_name(db=db, admin_name=AdminReg.user_name)
+    if existing_admin:
+        raise HTTPException(
+            status_code=409,
+            detail='User has already existed!'
+        )
+
+    # Check if email has already used.
+    existing_email = db.query(models.User).filter(models.User.email == AdminReg.email).first()
+    if existing_email:
+        raise HTTPException(
+            status_code=409,
+            detail='Email has already been used!'
+        )
+
+    # Generate the datetime of creating the admin.
     date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+    # Generate the uuid of the admin.
     admin_uuid = str(uuid4())
+
+    # Generate the hashed password
     hashed_password = get_password_hashed(plain_password=AdminReg.password)
+
+    # Create the column of the admin.
     db_admin = models.User(
         user_name=AdminReg.user_name,
         password=hashed_password,
@@ -88,9 +114,19 @@ def create_admin(db: Session, AdminReg: schemas.UserReg) -> dict:
         administrator=True
     )
 
-    db.add(db_admin)
-    db.commit()
-    db.refresh(db_admin)
+    try:
+
+        db.add(db_admin)
+        db.commit()
+        db.refresh(db_admin)
+
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+
     return db_admin
 
 
