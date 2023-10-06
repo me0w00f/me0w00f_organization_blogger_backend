@@ -3,12 +3,13 @@
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 from uuid import uuid4
 
 from tools.hash_tools import get_password_hashed
 from . import models, schemas
 import time
-
+import config
 
 def create_user(UserReg: schemas.UserReg, db: Session) -> dict | bool:
     """
@@ -178,3 +179,27 @@ def get_admin_by_uuid(db: Session, admin_uuid: str):
         models.User.user_uuid == admin_uuid,
         models.User.administrator == True
     ).first()
+
+
+def select_all_of_posts_by_page(page: int, db: Session):
+    """
+    Function to retrieve posts from the database, paginated by the given page number.
+    Return 10 items of the posts by default.
+    It could be decided by the `config.py`.
+    :param page:
+    :param db:
+    :return: The list type data of posts.
+    """
+
+    # Get the maximum amount posts to retrieve per page from the configuration.
+    posts_select_limit: int = config.RESOURCES_POSTS_LIMIT
+
+    # Calculate the offset for the database query based on the page number and posts limit.
+    page_db: int = (page - 1) * posts_select_limit
+
+    # Query the database for posts, ordered by date in descending order.
+    # Limit the amount results by the posts limit and offset the results by the calculated offset.
+    # Return all results as a list.
+    return db.query(models.Posts)\
+        .order_by(desc(models.Posts.date))\
+        .limit(posts_select_limit).offset(page_db).all()

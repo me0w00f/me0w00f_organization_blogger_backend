@@ -12,7 +12,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
 
-from routers import user
+from routers import user, resources
 from model import crud, models, schemas
 from dependencies.db import SessionLocal, engine
 
@@ -20,6 +20,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.include_router(user.router_user)
+app.include_router(resources.router_resources)
 
 
 @app.get("/")
