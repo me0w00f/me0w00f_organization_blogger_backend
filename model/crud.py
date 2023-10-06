@@ -11,6 +11,7 @@ from . import models, schemas
 import time
 import config
 
+
 def create_user(UserReg: schemas.UserReg, db: Session) -> dict | bool:
     """
     Create a user with information provided in the database.
@@ -200,6 +201,6 @@ def select_all_of_posts_by_page(page: int, db: Session):
     # Query the database for posts, ordered by date in descending order.
     # Limit the amount results by the posts limit and offset the results by the calculated offset.
     # Return all results as a list.
-    return db.query(models.Posts)\
-        .order_by(desc(models.Posts.date))\
+    return db.query(models.Posts) \
+        .order_by(desc(models.Posts.date)) \
         .limit(posts_select_limit).offset(page_db).all()
