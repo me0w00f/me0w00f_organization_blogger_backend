@@ -13,24 +13,15 @@ class UserReg(BaseModel):
         from_attributes = True
 
 
-class UserLogin(BaseModel):
-    user_name: str
-    password: str
-
-    class Config:
-        from_attributes = True
-
-
-class Posts(BaseModel):
-    title: str
-    description: str
-
-    class Config:
-        from_attributes = True
-
-
 class Category(BaseModel):
     category_name: str
+
+    class Config:
+        from_attributes = True
+
+
+class Comment(BaseModel):
+    content: str
 
     class Config:
         from_attributes = True

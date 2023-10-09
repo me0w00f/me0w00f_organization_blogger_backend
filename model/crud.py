@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from tools.hash_tools import get_password_hashed
 from . import models, schemas
-import time
+from datetime import datetime
 import config
 
 
@@ -37,7 +37,7 @@ def create_user(UserReg: schemas.UserReg, db: Session) -> dict | bool:
         )
 
     # Generate the datetime of creating the user.
-    date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    date = datetime.utcnow()
 
     # Generate the uuid of the user.
     user_uuid = str(uuid4())
@@ -97,7 +97,7 @@ def create_admin(db: Session, AdminReg: schemas.UserReg) -> dict:
         )
 
     # Generate the datetime of creating the admin.
-    date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    date = datetime.utcnow()
 
     # Generate the uuid of the admin.
     admin_uuid = str(uuid4())
@@ -130,6 +130,47 @@ def create_admin(db: Session, AdminReg: schemas.UserReg) -> dict:
         )
 
     return db_admin
+
+
+def create_post(post_uuid: str, user_uuid: str, posts_title: str, tags: str, category_id: int,
+                comment: bool, db: Session):
+    """
+    Create a data of a post in the database.
+    :param post_uuid: Uuid of the post.
+    :param user_uuid: Uuid of the user.
+    :param posts_title: Title of the post.
+    :param tags: Tags of the post.
+    :param category_id: Category of the post.
+    :param comment: Allow to comment or not.
+    :param db: Session of the database.
+    :return: Result of operation.
+    """
+
+    date = datetime.utcnow()
+
+    db_posts = models.Posts(
+        post_uuid=post_uuid,
+        title=posts_title,
+        author_uuid=user_uuid,
+        category_id=category_id,
+        tags=tags,
+        comment=comment,
+        date=date
+    )
+
+    try:
+        db.add(db_posts)
+        db.commit()
+        db.refresh(db_posts)
+
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+
+    return db_posts
 
 
 def get_user_by_name(db: Session, user_name: str):
@@ -204,3 +245,5 @@ def select_all_of_posts_by_page(page: int, db: Session):
     return db.query(models.Posts) \
         .order_by(desc(models.Posts.date)) \
         .limit(posts_select_limit).offset(page_db).all()
+
+

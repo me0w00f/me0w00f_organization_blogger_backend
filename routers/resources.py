@@ -31,3 +31,8 @@ def get_posts(page: int, db: Session = Depends(get_db)):
     """
 
     return resource_tools.get_data_of_posts_from_db(page=page, db=db)
+
+
+@router_resources.get('/posts/get/{post_uuid}')
+def get_single_post(post_uuid: str, db: Session = Depends(get_db)):
+    pass
