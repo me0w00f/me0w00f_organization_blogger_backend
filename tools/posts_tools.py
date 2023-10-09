@@ -29,9 +29,14 @@ def write_the_post(user_name: str, post_uuid: str, post_file: UploadFile = File(
             status_code=500,
             detail=f"Can not create directory {author_post_dir.name} !"
         )
-
-    with open(str(author_post_dir.joinpath(post_uuid+'.md')), 'w') as f:
-        content = post_file.file.read()
-        f.write(content.decode('utf-8'))
+    try:
+        with open(str(author_post_dir.joinpath(post_uuid+'.md')), 'w') as f:
+            content = post_file.file.read()
+            f.write(content.decode('utf-8'))
+    except IOError as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Can not write posts file {str(author_post_dir.joinpath(post_uuid+'.md'))}! \n {e}"
+        )
 
     return True
