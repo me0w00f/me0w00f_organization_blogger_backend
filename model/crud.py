@@ -6,8 +6,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from uuid import uuid4
 
+from model.models import User, Posts, Category
 from tools.hash_tools import get_password_hashed
-from . import models, schemas
+from . import schemas
 from datetime import datetime
 import config
 
@@ -29,7 +30,7 @@ def create_user(UserReg: schemas.UserReg, db: Session) -> dict | bool:
         )
 
     # Check if email has already used.
-    existing_email = db.query(models.User).filter(models.User.email == UserReg.email).first()
+    existing_email = db.query(User).filter(User.email == UserReg.email).first()
     if existing_email:
         raise HTTPException(
             status_code=409,
@@ -46,7 +47,7 @@ def create_user(UserReg: schemas.UserReg, db: Session) -> dict | bool:
     hashed_password = get_password_hashed(plain_password=UserReg.password)
 
     # Create the column of the user.
-    db_user = models.User(
+    db_user = User(
         user_name=UserReg.user_name,
         password=hashed_password,
         email=UserReg.email,
@@ -89,7 +90,7 @@ def create_admin(db: Session, AdminReg: schemas.UserReg) -> dict:
         )
 
     # Check if email has already used.
-    existing_email = db.query(models.User).filter(models.User.email == AdminReg.email).first()
+    existing_email = db.query(User).filter(User.email == AdminReg.email).first()
     if existing_email:
         raise HTTPException(
             status_code=409,
@@ -106,7 +107,7 @@ def create_admin(db: Session, AdminReg: schemas.UserReg) -> dict:
     hashed_password = get_password_hashed(plain_password=AdminReg.password)
 
     # Create the column of the admin.
-    db_admin = models.User(
+    db_admin = User(
         user_name=AdminReg.user_name,
         password=hashed_password,
         email=AdminReg.email,
@@ -148,14 +149,15 @@ def create_post(post_uuid: str, user_uuid: str, posts_title: str, tags: str, cat
 
     date = datetime.utcnow()
 
-    db_posts = models.Posts(
+    db_posts = Posts(
         post_uuid=post_uuid,
         title=posts_title,
         author_uuid=user_uuid,
         category_id=category_id,
         tags=tags,
         comment=comment,
-        date=date
+        create_time=date,
+        update_time=date
     )
 
     try:
@@ -173,6 +175,71 @@ def create_post(post_uuid: str, user_uuid: str, posts_title: str, tags: str, cat
     return db_posts
 
 
+def update_post(post_uuid: str, user_uuid: str, posts_title: str, tags: str, category_id: int,
+                comment: bool, db: Session):
+    """
+    Update a post.
+    :param post_uuid: Uuid of the post.
+    :param user_uuid: Uuid of the user.
+    :param posts_title: Title of the post.
+    :param tags: Tags of the post.
+    :param category_id: Category of the post.
+    :param comment: Allow to comment or not.
+    :param db: Session of the database.
+    :return:
+    """
+    update_date = datetime.utcnow()
+
+    try:
+        status: int = db.query(Posts) \
+            .filter(Posts.post_uuid == post_uuid, Posts.author_uuid == user_uuid) \
+            .update(
+            {
+                'title': posts_title,
+                'tags': tags,
+                'category_id': category_id,
+                'comment': comment,
+                'update_time': update_date
+            },
+            synchronize_session="evaluate")
+
+        if status == 0:
+            return False
+
+        db.commit()
+
+        return True
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+
+
+def delete_post(post_uuid: str, user_uuid: str, db: Session):
+    """
+    Delete a post.
+    :param post_uuid: Uuid of the post.
+    :param user_uuid: Uuid of the user.
+    :param db: Session of the database.
+    :return:
+    """
+
+    db_delete_post = db.query(Posts)\
+        .filter(Posts.post_uuid == post_uuid, Posts.author_uuid == user_uuid).first()
+
+    try:
+        db.delete(db_delete_post)
+        db.commit()
+        return True
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+
+
 def get_user_by_name(db: Session, user_name: str):
     """
     Get a user from the database by their username.
@@ -180,7 +247,7 @@ def get_user_by_name(db: Session, user_name: str):
     :param user_name: The name of the user.
     :return: The user if they exist, None otherwise.
     """
-    return db.query(models.User).filter(models.User.user_name == user_name).first()
+    return db.query(User).filter(User.user_name == user_name).first()
 
 
 def get_user_by_uuid(db: Session, user_uuid: str):
@@ -192,7 +259,7 @@ def get_user_by_uuid(db: Session, user_uuid: str):
     :return: The user if they exist, None otherwise.
     """
 
-    return db.query(models.User).filter(models.User.user_uuid == user_uuid).first()
+    return db.query(User).filter(User.user_uuid == user_uuid).first()
 
 
 def get_admin_by_name(db: Session, admin_name: str):
@@ -203,13 +270,13 @@ def get_admin_by_name(db: Session, admin_name: str):
     :return: The admin if they exist, None otherwise.
     """
 
-    return db.query(models.User).filter(
-        models.User.user_name == admin_name,
-        models.User.administrator == True
+    return db.query(User).filter(
+        User.user_name == admin_name,
+        User.administrator == True
     ).first()
 
 
-def get_admin_by_uuid(db: Session, admin_uuid: str):
+def get_admin_by_uuid(admin_uuid: str, db: Session):
     """
     Get an admin from the database by their uuid.
     :param db: Session of database.
@@ -217,10 +284,33 @@ def get_admin_by_uuid(db: Session, admin_uuid: str):
     :return: The admin if they exist, None otherwise.
     """
 
-    return db.query(models.User).filter(
-        models.User.user_uuid == admin_uuid,
-        models.User.administrator == True
+    return db.query(User).filter(
+        User.user_uuid == admin_uuid,
+        User.administrator == True
     ).first()
+
+
+def get_category_name(category_id: int, db: Session):
+    """
+    Get the name of category by ID.
+    :param category_id: ID of the category.
+    :param db: Session of database.
+    :return: The name of category by ID.
+    """
+    return db.query(Category).filter(Category.id == category_id).first()
+
+
+def check_post_author(author_uuid: str, post_uuid: str, db: Session):
+    """
+    Check if a post is authorized by a user by querying the database.
+    :param author_uuid: Uuid of the author.
+    :param post_uuid: Uuid of the post.
+    :param db: Session of the database.
+    :return: The result of querying.
+    """
+
+    return db.query(Posts) \
+        .filter(Posts.post_uuid == post_uuid, Posts.author_uuid == author_uuid).first()
 
 
 def select_all_of_posts_by_page(page: int, db: Session):
@@ -242,8 +332,7 @@ def select_all_of_posts_by_page(page: int, db: Session):
     # Query the database for posts, ordered by date in descending order.
     # Limit the amount results by the posts limit and offset the results by the calculated offset.
     # Return all results as a list.
-    return db.query(models.Posts) \
-        .order_by(desc(models.Posts.date)) \
+
+    return db.query(Posts) \
+        .order_by(desc(Posts.create_time)) \
         .limit(posts_select_limit).offset(page_db).all()
-
-

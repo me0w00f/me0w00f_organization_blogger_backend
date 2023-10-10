@@ -27,7 +27,8 @@ class Posts(Base):
     tags = Column(TEXT, nullable=False)
     category_id = Column(INT, nullable=False)
     comment = Column(BOOLEAN, nullable=False)
-    date = Column(DATETIME, nullable=False)
+    create_time = Column(DATETIME, nullable=False)
+    update_time = Column(DATETIME, nullable=False)
 
 
 class Category(Base):

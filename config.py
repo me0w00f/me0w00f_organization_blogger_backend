@@ -18,5 +18,5 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Uploading
 
-ALLOWED_TYPE = ['md', 'jpg', 'jpeg', 'png']
+ALLOWED_TYPE = ['.md', '.markdown']
 
