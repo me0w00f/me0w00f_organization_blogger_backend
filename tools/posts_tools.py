@@ -8,6 +8,7 @@ from model import crud
 import config
 import shutil
 
+
 def write_the_post(user_name: str, post_uuid: str, post_file: UploadFile = File()):
     """
     Create the directory for the post.

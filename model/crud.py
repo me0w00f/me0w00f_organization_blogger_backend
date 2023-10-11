@@ -336,3 +336,14 @@ def select_all_of_posts_by_page(page: int, db: Session):
     return db.query(Posts) \
         .order_by(desc(Posts.create_time)) \
         .limit(posts_select_limit).offset(page_db).all()
+
+
+def get_single_post_data(post_uuid: str, db: Session):
+    """
+    Get the data of a single post from the database.
+    :param post_uuid: Uuid of the post.
+    :param db: Session of the database.
+    :return: The dict type data of a single post.
+    """
+
+    return db.query(Posts).filter(Posts.post_uuid == post_uuid).first()
