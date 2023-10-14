@@ -9,7 +9,7 @@ from model import schemas, crud
 from jose import JWTError
 from sqlalchemy.orm import Session
 from dependencies.db import get_db
-from tools import token_tools
+from tools import token_tools, user_data_tools
 import config
 
 router_user = APIRouter(
@@ -34,6 +34,16 @@ async def create_user(UserReg: schemas.UserReg, db: Session = Depends(get_db)):
     """
 
     if crud.create_user(UserReg=UserReg, db=db):
+
+        user_new = crud.get_user_by_name(UserReg.user_name, db=db)
+
+        if not user_data_tools.create_user_directory(user_uuid=user_new.user_uuid):
+
+            raise HTTPException(
+                status_code=500,
+                detail="Cannot create user directory!"
+            )
+
         return {
             'Status': 'Success!'
         }

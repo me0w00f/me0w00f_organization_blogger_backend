@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from uuid import uuid4
 
-from model.models import User, Posts, Category
+from model.models import User, Posts, Category, Comments
 from tools.hash_tools import get_password_hashed
 from . import schemas
 from datetime import datetime
@@ -240,7 +240,70 @@ def delete_post(post_uuid: str, user_uuid: str, db: Session):
         )
 
 
-def get_user_by_name(db: Session, user_name: str):
+def create_comments_in_db(comments: schemas.Comment, user_uuid: str, db: Session):
+    """
+    Create a comment in the database.
+    :param user_uuid: Uuid of the user.
+    :param comments: Content of the comment, it is an object.
+    :param db: Session of the database.
+    :return: Result.
+    """
+    date = datetime.utcnow()
+    comment_uuid = str(uuid4())
+
+    db_comments = Comments(
+        comment_uuid=comment_uuid,
+        post_uuid=comments.post_uuid,
+        user_uuid=user_uuid,
+        content=comments.content,
+        date=date
+    )
+
+    try:
+        db.add(db_comments)
+        db.commit()
+        db.refresh(db_comments)
+
+        return True
+
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+
+
+def create_category_in_db(category: schemas.Category, db: Session):
+    """
+    Create a category in the database.
+    :param category: Category name.
+    :param db: Session of database.
+    :return: Result.
+    """
+    date = datetime.utcnow()
+
+    db_category = Category(
+        category_name=category.category_name,
+        datetime=date
+    )
+
+    try:
+        db.add(db_category)
+        db.commit()
+        db.refresh(db_category)
+
+        return True
+
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=500,
+            detail=(f"{category.category_name} has already existed!", str(e))
+        )
+
+
+def get_user_by_name(user_name: str, db: Session):
     """
     Get a user from the database by their username.
     :param db: Session of database.
@@ -347,3 +410,24 @@ def get_single_post_data(post_uuid: str, db: Session):
     """
 
     return db.query(Posts).filter(Posts.post_uuid == post_uuid).first()
+
+
+def get_all_categories_in_db(db: Session):
+    """
+    Get all the categories from the database.
+    :param db: Session of the database.
+    :return: Return the data of all the categories.
+    """
+
+    return db.query(Category.id, Category.category_name)
+
+
+def get_category_in_db(category_id: int, db: Session):
+    """
+    Get a category_name in the database.
+    :param category_id: ID of the category.
+    :param db: Session of the database.
+    :return: Result.
+    """
+
+    return db.query(Category.category_name).filter(Category.id == category_id).first()

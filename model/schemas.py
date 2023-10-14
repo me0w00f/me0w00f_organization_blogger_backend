@@ -21,6 +21,7 @@ class Category(BaseModel):
 
 
 class Comment(BaseModel):
+    post_uuid: str
     content: str
 
     class Config:

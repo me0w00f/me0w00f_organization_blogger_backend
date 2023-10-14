@@ -85,3 +85,14 @@ def get_single_post(post_uuid: str, db: Session = Depends(get_db)):
     }
 
     return [post_info, post_content]
+
+
+@router_resources.get('/categories/getAll')
+def get_all_categories(db: Session = Depends(get_db)):
+    """
+    Get all the categories.
+    :param db:
+    :return: Data of categories.
+    """
+
+    return crud.get_all_categories_in_db(db=db)

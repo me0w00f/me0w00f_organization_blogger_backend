@@ -74,3 +74,19 @@ def check_if_authorized(author_uuid: str, post_uuid: str, db: Session):
         return False
 
     return True
+
+
+def check_if_category_exists(category_id: int, db: Session):
+    """
+    Check if the category exists in the database.
+    :param category_id: ID of the category.
+    :param db: Session of the database
+    :return: Result.
+    """
+
+    if not crud.get_category_name(category_id=category_id, db=db):
+
+        return False
+
+    return True
+
