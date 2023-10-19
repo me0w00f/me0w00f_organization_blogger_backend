@@ -81,10 +81,11 @@ def get_single_post(post_uuid: str, db: Session = Depends(get_db)):
         "category": category_name,
         "comment": db_post_info.comment,
         "create_time": db_post_info.create_time,
-        "update_time": db_post_info.update_time
+        "update_time": db_post_info.update_time,
+        "content": post_content
     }
 
-    return [post_info, post_content]
+    return post_info
 
 
 @router_resources.get('/categories/getAll')

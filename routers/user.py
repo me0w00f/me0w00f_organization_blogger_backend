@@ -2,13 +2,14 @@
 # Filename: user.py
 
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
 
 from model import schemas, crud
 from jose import JWTError
 from sqlalchemy.orm import Session
 from dependencies.db import get_db
+from dependencies.oauth2scheme import oauth2Scheme
 from tools import token_tools, user_data_tools
 import config
 
@@ -94,3 +95,17 @@ async def user_login(UserLogin: OAuth2PasswordRequestForm = Depends(), db: Sessi
 
     # Return the access token.
     return {'access_token': access_token}
+
+
+@router_user.post('/avatar/set')
+def set_avatar(avatar_file: UploadFile = File(), token: str = Depends(oauth2Scheme), db: Session = Depends(get_db)):
+    """
+    Set or update an avatar for user.
+    :param avatar_file: Avatar file uploaded.
+    :param token: Token of user.
+    :param db: Session of the database.
+    :return: Response of result.
+    """
+
+    user_uuid = token_tools.get_uuid_by_token(token=token)
+

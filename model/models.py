@@ -1,7 +1,7 @@
 # encoding: utf-8
 # Filename: models.py
 
-from sqlalchemy import Column, INT, VARCHAR, TEXT, DATETIME, BOOLEAN
+from sqlalchemy import Column, INT, VARCHAR, TEXT, DATETIME, BOOLEAN, ARRAY
 from dependencies.db import Base
 
 

@@ -1,7 +1,7 @@
 # encoding: utf-8
 # Filename: posts.py
 
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from uuid import uuid4
 from sqlalchemy.orm import Session
 from dependencies.db import get_db
