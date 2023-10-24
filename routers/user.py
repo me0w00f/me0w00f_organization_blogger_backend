@@ -10,7 +10,7 @@ from jose import JWTError
 from sqlalchemy.orm import Session
 from dependencies.db import get_db
 from dependencies.oauth2scheme import oauth2Scheme
-from tools import token_tools, user_data_tools
+from tools import token_tools, user_data_tools, file_tools
 import config
 
 router_user = APIRouter(
@@ -108,4 +108,21 @@ def set_avatar(avatar_file: UploadFile = File(), token: str = Depends(oauth2Sche
     """
 
     user_uuid = token_tools.get_uuid_by_token(token=token)
+    user = crud.get_user_by_uuid(user_uuid=user_uuid, db=db)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Permission Denied!"
+        )
 
+    if not file_tools.check_image_file_allowed(upload_file=avatar_file):
+        raise HTTPException(
+            status_code=400,
+            detail=f"File '{avatar_file.filename}' is not allowed to upload!"
+        )
+
+    if user_data_tools.upload_user_avatar(avatar_file=avatar_file, user_uuid=user_uuid):
+
+        return {
+            "Status": "Success!"
+        }

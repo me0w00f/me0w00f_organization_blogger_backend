@@ -47,7 +47,7 @@ async def create_a_post(posts_title: str, tags: str, category_id: int, comment: 
             detail="Permission Denied!"
         )
 
-    if not file_tools.check_file_allowed(upload_file=content_file):
+    if not file_tools.check_posts_file_allowed(upload_file=content_file):
         raise HTTPException(
             status_code=400,
             detail=f"File '{content_file.filename}' is not allowed to upload!"
@@ -97,7 +97,7 @@ async def update_a_post(post_uuid: str, posts_title: str, tags: str, category_id
             detail="Permission Denied!"
         )
 
-    if not file_tools.check_file_allowed(upload_file=new_content_file):
+    if not file_tools.check_posts_file_allowed(upload_file=new_content_file):
         raise HTTPException(
             status_code=400,
             detail=f"File '{new_content_file.filename}' is not allowed to upload!"

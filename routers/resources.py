@@ -1,12 +1,17 @@
 # encoding: utf-8
 # Filename: resources.py
-
+import os
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
+import config
 from dependencies.db import get_db
+from dependencies.oauth2scheme import oauth2Scheme
 from model import crud
-from tools import resource_tools
+from pathlib import Path
+from tools import resource_tools, token_tools
+
 
 router_resources = APIRouter(
     prefix='/api/resources',
@@ -97,3 +102,36 @@ def get_all_categories(db: Session = Depends(get_db)):
     """
 
     return crud.get_all_categories_in_db(db=db)
+
+
+@router_resources.get('/user_info/get')
+def get_user_info(token: str = Depends(oauth2Scheme), db: Session = Depends(get_db)):
+
+    """
+    Get information of the logged user.
+    :param token: Token of user.
+    :param db: Session of database.
+    :return: Data of the logged user.
+    """
+
+    user_uuid = token_tools.get_uuid_by_token(token=token)
+    user = crud.get_user_by_uuid(user_uuid=user_uuid, db=db)
+
+    if not user:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Permission denied."
+        )
+
+    avatar_path = Path(config.STATIC_DIR).joinpath('users').joinpath(user_uuid)
+    avatar_filename = os.listdir(avatar_path)[0]
+
+    user_info = {
+        "id": user.id,
+        "nick_name": user.nick_name,
+        "bio": user.description,
+        "avatar": '/' + str(avatar_path.joinpath(avatar_filename))
+    }
+
+    return user_info
