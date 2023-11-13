@@ -6,7 +6,6 @@ from fastapi import HTTPException
 from model import crud
 from sqlalchemy.orm import Session
 from pathlib import Path
-import shutil
 import config
 
 
@@ -40,8 +39,9 @@ def read_post_content(post_uuid: str, author_name: str):
     :return:
     """
 
+    # Define the path of the author directory.
     author_dir = Path(config.STATIC_DIR).joinpath("posts")
-    post_dir = author_dir.joinpath(author_name).joinpath(post_uuid).joinpath(post_uuid + '.md')
+    post_dir = author_dir.joinpath(author_name).joinpath(post_uuid).joinpath(post_uuid + '.html')
     try:
         with open(post_dir) as f:
 

@@ -41,9 +41,14 @@ def send_comments(comments: schemas.Comment, token: str = Depends(oauth2Scheme),
         }
 
 
-@router_comments.get('/get_all')
+@router_comments.get('/get_in_a_post')
 def get_all_comments_in_a_post(post_uuid: str, db: Session = Depends(get_db)):
     """
-
-    :return:
+    Get all the comments from a post by providing a uuid.
+    :param post_uuid: Uuid of post.
+    :param db: Session of the database.
+    :return: Status of response.
     """
+
+    return comment_tools.load_comments_by_a_post_uuid(post_uuid=post_uuid, db=db)
+

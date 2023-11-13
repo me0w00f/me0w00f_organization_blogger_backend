@@ -4,6 +4,7 @@
 from fastapi import HTTPException, UploadFile, File
 from pathlib import Path
 from sqlalchemy.orm import Session
+from tools.file_tools import convert_md_to_html
 from model import crud
 import config
 import shutil
@@ -33,9 +34,9 @@ def write_the_post(user_name: str, post_uuid: str, post_file: UploadFile = File(
             detail=f"Can not create directory {author_post_dir.name} !"
         )
     try:
-        with open(str(author_post_dir.joinpath(post_uuid+'.md')), 'w') as f:
-            content = post_file.file.read()
-            f.write(content.decode('utf-8'))
+        with open(str(author_post_dir.joinpath(post_uuid+'.html')), 'w') as f:
+            content = convert_md_to_html(original_markdown_content=post_file.file.read().decode('utf-8'))
+            f.write(content)
     except IOError as e:
         raise HTTPException(
             status_code=500,
@@ -46,12 +47,21 @@ def write_the_post(user_name: str, post_uuid: str, post_file: UploadFile = File(
 
 
 def delete_the_post(user_name: str, post_uuid: str):
+    """
+    Delete the post, which is published by the user.
+    :param user_name: Name of user.
+    :param post_uuid: Uuid of post.
+    :return: Result of the operation.
+    """
+    # Define the Path of the posts directory authorized by the user.
     author_dir = Path(config.STATIC_DIR).joinpath("posts").joinpath(user_name)
     author_post_dir = author_dir.joinpath(post_uuid)
 
+    # Remove the directory with Exception dealing.
     try:
         shutil.rmtree(author_post_dir)
 
+    # If some errors appear, raise the Exception by HTTP to the frontend.
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -89,4 +99,7 @@ def check_if_category_exists(category_id: int, db: Session):
         return False
 
     return True
+
+
+
 

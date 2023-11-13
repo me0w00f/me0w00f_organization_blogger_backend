@@ -6,7 +6,6 @@ from fastapi import UploadFile, File, HTTPException
 from pathlib import Path
 import config
 import random
-import os
 
 
 def create_user_directory(user_uuid: str):
@@ -17,12 +16,11 @@ def create_user_directory(user_uuid: str):
     """
 
     # Generate the directory address of the user.
-    user_dir = Path(config.STATIC_DIR).joinpath('users').joinpath(user_uuid)
+    user_dir = Path(config.STATIC_DIR).joinpath('users', user_uuid)
 
     # Create the directory.
     try:
         user_dir.mkdir(exist_ok=True)
-
         return True
 
     except IOError:
@@ -35,27 +33,29 @@ def upload_user_avatar(user_uuid: str, avatar_file: UploadFile = File()):
     Save and compress the avatar of the user.
     :return:
     """
+    # Define the original path.
+    original_avatar_path = Path(config.STATIC_DIR).joinpath('users', user_uuid)
 
-    original_avatar_path = Path(config.STATIC_DIR)\
-        .joinpath('users')\
-        .joinpath(user_uuid)
+    # Get the extension of the file.
+    file_extension = Path(avatar_file.filename).suffix
+    avatar_file_list = list(original_avatar_path.glob("*.*"))
 
-    file_extension = os.path.splitext(avatar_file.filename)
-    avatar_file_list = os.listdir(original_avatar_path)
-
+    # Deal with the file of avatar.
     try:
+        # Delete the file of old avatar
         if len(avatar_file_list) != 0:
             for i in avatar_file_list:
-                os.remove(original_avatar_path.joinpath(i))
-        with open(original_avatar_path.joinpath('0' + file_extension[1]), 'wb') as f:
+                i.unlink(missing_ok=True)
+        # Write the file of new avatar.
+        with original_avatar_path.joinpath("0" + str(random.randint(10000, 99999)) + file_extension).open("wb") as f:
             content = avatar_file.file.read()
             f.write(content)
             return True
+
+    # Deal with errors.
     except IOError as e:
 
         raise HTTPException(
             status_code=500,
             detail=str(e)
         )
-
-

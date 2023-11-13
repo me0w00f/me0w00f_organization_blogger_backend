@@ -70,11 +70,16 @@ def get_single_post(post_uuid: str, db: Session = Depends(get_db)):
     :param db: Session of the database.
     :return: Content, information of the post.
     """
+
+    # Get the data from the database.
     db_post_info = resource_tools.get_data_of_single_post_from_db(post_uuid=post_uuid, db=db)
     author = crud.get_user_by_uuid(user_uuid=db_post_info.author_uuid, db=db)
     category_name = crud.get_category_name(category_id=db_post_info.category_id, db=db).category_name
+
+    # Read the content of the post.
     post_content = resource_tools.read_post_content(post_uuid=post_uuid, author_name=author.user_name)
 
+    # Regenerate the data.
     post_info = {
         "id": db_post_info.id,
         "post_uuid": db_post_info.post_uuid,
@@ -129,7 +134,10 @@ def get_user_info(token: str = Depends(oauth2Scheme), db: Session = Depends(get_
 
     user_info = {
         "id": user.id,
+        "user_name": user.user_name,
         "nick_name": user.nick_name,
+        "administrator": user.administrator,
+        "email": user.email,
         "bio": user.description,
         "avatar": '/' + str(avatar_path.joinpath(avatar_filename))
     }

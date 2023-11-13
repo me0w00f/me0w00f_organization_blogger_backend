@@ -56,7 +56,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
 
-    # Adding the expiration time to the data to be encoded
+    # Adding the expiration time to the data to be encoded.
     to_encode.update({
         "exp": expire
     })
@@ -78,12 +78,17 @@ def get_uuid_by_token(token: str):
     """
 
     try:
+        # Load the data decoder by JWT method.
+        # The key algorithms are defined in the configuration file.
         data_decoder = jwt.decode(token=token, key=config.SECRET_KEY, algorithms=config.ALGORITHM)
         user_uuid: str = data_decoder.get('sub')
 
+        # If the user uuid is not found, return the False.
         if user_uuid is None:
             return False
+        # Else then, return the user uuid from the token.
         return user_uuid
 
+    # If there are some Errors of JWT, then also return False.
     except JWTError:
         return False
