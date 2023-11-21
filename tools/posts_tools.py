@@ -14,7 +14,7 @@ def write_the_post(user_name: str, post_uuid: str, post_file: UploadFile = File(
     """
     Create the directory for the post.
     :param post_file: File Object.
-    :param user_name: Name of user, it cannot be changed.
+    :param user_name: Name of the user, it cannot be changed.
     :param post_uuid: Uuid of post.
     :return: Result of the operation.
     """

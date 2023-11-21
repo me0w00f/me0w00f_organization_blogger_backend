@@ -226,7 +226,7 @@ def delete_post(post_uuid: str, user_uuid: str, db: Session):
     :return:
     """
 
-    db_delete_post = db.query(Posts)\
+    db_delete_post = db.query(Posts) \
         .filter(Posts.post_uuid == post_uuid, Posts.author_uuid == user_uuid).first()
 
     try:
@@ -433,7 +433,7 @@ def get_category_in_db(category_id: int, db: Session):
     return db.query(Category.category_name).filter(Category.id == category_id).first()
 
 
-def query_all_comments_by_post_uuid(post_uuid: str, db: Session):
+def query_all_comments_by_post_uuid(post_uuid: str, db: Session) -> list[type(Comments)]:
     """
     Query the data of all comments by a post uuid.
     :param post_uuid: Uuid of post.
@@ -443,7 +443,7 @@ def query_all_comments_by_post_uuid(post_uuid: str, db: Session):
 
     try:
         # Query the comments.
-        db_comments = db.query(Comments).filter(Comments.post_uuid == post_uuid).all()
+        db_comments = db.query(Comments).order_by(desc(Comments.date)).filter(Comments.post_uuid == post_uuid).all()
         return db_comments
     except Exception as e:
         raise HTTPException(

@@ -1,7 +1,7 @@
 # encoding: utf-8
 # Filename: posts.py
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from uuid import uuid4
 from sqlalchemy.orm import Session
 from dependencies.db import get_db
@@ -23,8 +23,13 @@ router_posts = APIRouter(
 
 
 @router_posts.post('/create')
-async def create_a_post(posts_title: str, tags: str, category_id: int, comment: bool, content_file: UploadFile = File(),
-                        token: str = Depends(oauth2Scheme), db: Session = Depends(get_db)):
+async def create_a_post(posts_title: str = Form(),
+                        tags: str = Form(),
+                        category_id: int = Form(),
+                        comment: bool = Form(),
+                        content_file: UploadFile = File(),
+                        token: str = Depends(oauth2Scheme),
+                        db: Session = Depends(get_db)):
     """
     * Send a post with a file.
     * :param posts_title: Title of the post.
@@ -73,8 +78,13 @@ async def create_a_post(posts_title: str, tags: str, category_id: int, comment: 
 
 
 @router_posts.put('/update')
-async def update_a_post(post_uuid: str, posts_title: str, tags: str, category_id: int, comment: bool,
-                        new_content_file: UploadFile = File(), token: str = Depends(oauth2Scheme),
+async def update_a_post(post_uuid: str = Form(),
+                        posts_title: str = Form(),
+                        tags: str = Form(),
+                        category_id: int = Form(),
+                        comment: bool = Form(),
+                        new_content_file: UploadFile = File(),
+                        token: str = Depends(oauth2Scheme),
                         db: Session = Depends(get_db)):
     """
     * Update a post with new information and a file.
@@ -189,3 +199,14 @@ def create_categories(category: schemas.Category,
         return {
             "Status": "Success!"
         }
+
+
+@router_posts.get('/categories/getAll')
+def get_all_categories(db: Session = Depends(get_db)):
+    """
+    Get all existing categories.
+    :param db: Session of the database.
+    :return:
+    """
+
+    return crud.get_all_categories_in_db(db=db)

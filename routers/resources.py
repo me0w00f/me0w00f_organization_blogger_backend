@@ -129,7 +129,7 @@ def get_user_info(token: str = Depends(oauth2Scheme), db: Session = Depends(get_
             detail="Permission denied."
         )
 
-    avatar_path = Path(config.STATIC_DIR).joinpath('users').joinpath(user_uuid)
+    avatar_path = Path(config.STATIC_DIR).joinpath('users', user_uuid)
     avatar_filename = os.listdir(avatar_path)[0]
 
     user_info = {
