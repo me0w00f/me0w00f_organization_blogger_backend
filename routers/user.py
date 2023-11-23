@@ -26,7 +26,7 @@ router_user = APIRouter(
 
 
 @router_user.post('/sign_up')
-async def create_user(UserReg: schemas.UserReg, db: Session = Depends(get_db)):
+def create_user(UserReg: schemas.UserReg, db: Session = Depends(get_db)):
     """
     * Create a user by providing username, password and email.
     * **:param UserReg**: The information to sign up.
@@ -51,7 +51,7 @@ async def create_user(UserReg: schemas.UserReg, db: Session = Depends(get_db)):
 
 
 @router_user.post('/token')
-async def user_login(UserLogin: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def user_login(UserLogin: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """
     * Login an account by providing username and password, then return a token.
     * **:param UserLogin**: The information to sign in.

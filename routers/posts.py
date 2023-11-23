@@ -23,13 +23,13 @@ router_posts = APIRouter(
 
 
 @router_posts.post('/create')
-async def create_a_post(posts_title: str = Form(),
-                        tags: str = Form(),
-                        category_id: int = Form(),
-                        comment: bool = Form(),
-                        content_file: UploadFile = File(),
-                        token: str = Depends(oauth2Scheme),
-                        db: Session = Depends(get_db)):
+def create_a_post(posts_title: str = Form(),
+                  tags: str = Form(),
+                  category_id: int = Form(),
+                  comment: bool = Form(),
+                  content_file: UploadFile = File(),
+                  token: str = Depends(oauth2Scheme),
+                  db: Session = Depends(get_db)):
     """
     * Send a post with a file.
     * :param posts_title: Title of the post.
@@ -78,14 +78,14 @@ async def create_a_post(posts_title: str = Form(),
 
 
 @router_posts.put('/update')
-async def update_a_post(post_uuid: str = Form(),
-                        posts_title: str = Form(),
-                        tags: str = Form(),
-                        category_id: int = Form(),
-                        comment: bool = Form(),
-                        new_content_file: UploadFile = File(),
-                        token: str = Depends(oauth2Scheme),
-                        db: Session = Depends(get_db)):
+def update_a_post(post_uuid: str = Form(),
+                  posts_title: str = Form(),
+                  tags: str = Form(),
+                  category_id: int = Form(),
+                  comment: bool = Form(),
+                  new_content_file: UploadFile = File(),
+                  token: str = Depends(oauth2Scheme),
+                  db: Session = Depends(get_db)):
     """
     * Update a post with new information and a file.
     * :param post_uuid: Uuid of the post.
@@ -139,7 +139,7 @@ async def update_a_post(post_uuid: str = Form(),
 
 
 @router_posts.delete('/delete')
-async def delete_a_post(post_uuid: str, token: str = Depends(oauth2Scheme), db: Session = Depends(get_db)):
+def delete_a_post(post_uuid: str, token: str = Depends(oauth2Scheme), db: Session = Depends(get_db)):
     """
     Delete a post.
     :param post_uuid: Uuid of the post.
