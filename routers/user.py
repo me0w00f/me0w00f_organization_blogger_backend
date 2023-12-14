@@ -39,7 +39,6 @@ def create_user(UserReg: schemas.UserReg, db: Session = Depends(get_db)):
         user_new = crud.get_user_by_name(UserReg.user_name, db=db)
 
         if not user_data_tools.create_user_directory(user_uuid=user_new.user_uuid):
-
             raise HTTPException(
                 status_code=500,
                 detail="Cannot create user directory!"
@@ -122,7 +121,24 @@ def set_avatar(avatar_file: UploadFile = File(), token: str = Depends(oauth2Sche
         )
 
     if user_data_tools.upload_user_avatar(avatar_file=avatar_file, user_uuid=user_uuid):
+        return {
+            "Status": "Success!"
+        }
 
+
+@router_user.put('/info/modify')
+def modify_user_info(user_info_modified: schemas.UserModify, token: str = Depends(oauth2Scheme),
+                     db: Session = Depends(get_db)):
+    """
+    Modify the information of the users.
+    :param user_info_modified: New information of user in reuqest body.
+    :param token: Token of the user for authentication.
+    :param db: Session of the database.
+    :return: Status of the operation.
+    """
+
+    user_uuid: str = token_tools.get_uuid_by_token(token=token)
+    if user_data_tools.update_user_info(user_uuid=user_uuid, user_info_modified=user_info_modified, db=db):
         return {
             "Status": "Success!"
         }

@@ -2,3 +2,5 @@
 # Filename: admin_tools.py
 
 
+def create_administrators():
+    pass

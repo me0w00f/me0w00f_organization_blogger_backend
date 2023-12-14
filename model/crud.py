@@ -450,3 +450,59 @@ def query_all_comments_by_post_uuid(post_uuid: str, db: Session) -> list[type(Co
             status_code=400,
             detail=str(e)
         )
+
+
+def update_the_nick_name_by_uuid(new_nick_name: str, user_uuid: str, db: Session):
+    """
+    Update the nick_name of a user by providing a UUID.
+    :param new_nick_name: New nick name.
+    :param user_uuid: UUID of the user.
+    :param db: Session of the database.
+    :return: Status of the operation.
+    """
+
+    try:
+        status: int = db.query(User).filter(User.user_uuid == user_uuid).update(
+            {"nick_name": new_nick_name},
+            synchronize_session="evaluate"
+        )
+
+        if status == 0:
+            return False
+
+        db.commit()
+        return True
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+
+
+def update_the_description_by_uuid(new_description: str, user_uuid: str, db: Session):
+    """
+    Update the description of a user by providing a UUID.
+    :param new_description: New description.
+    :param user_uuid: UUID of the user.
+    :param db: Session of the database.
+    :return: Status of the operation.
+    """
+
+    try:
+        status: int = db.query(User).filter(User.user_uuid == user_uuid).update(
+            {"description": new_description},
+            synchronize_session="evaluate"
+        )
+
+        if status == 0:
+            return False
+
+        db.commit()
+        return True
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )

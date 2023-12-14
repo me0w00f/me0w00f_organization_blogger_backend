@@ -1,8 +1,9 @@
 # encoding: utf-8
 # Filename: user_data_tools.py
-import os
 
+from model import schemas, crud
 from fastapi import UploadFile, File, HTTPException
+from sqlalchemy.orm import Session
 from pathlib import Path
 import config
 import random
@@ -59,3 +60,20 @@ def upload_user_avatar(user_uuid: str, avatar_file: UploadFile = File()):
             status_code=500,
             detail=str(e)
         )
+
+
+def update_user_info(user_uuid: str, user_info_modified: schemas.UserModify, db: Session):
+    """
+    Update the nick_name and description for a user.
+    :param user_uuid: UUID of the user.
+    :param user_info_modified:  New information of user in reuqest body.
+    :param db: Session of the database.
+    :return: Status of the operation.
+    """
+
+    new_nick_name: str = user_info_modified.nick_name
+    new_description: str = user_info_modified.description
+
+    if crud.update_the_nick_name_by_uuid(user_uuid=user_uuid, new_nick_name=new_nick_name, db=db) and \
+            crud.update_the_description_by_uuid(new_description=new_description, user_uuid=user_uuid, db=db):
+        return True
