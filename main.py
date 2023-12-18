@@ -13,7 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from datetime import datetime
 from pathlib import Path
-
+from tools import admin_tools
 from routers import user, resources, posts, administrator, comments
 from model import crud, models, schemas
 from dependencies.db import SessionLocal, engine
@@ -36,6 +36,8 @@ user_path.mkdir(exist_ok=True)
 posts_path.mkdir(exist_ok=True)
 
 app.mount('/static', StaticFiles(directory=config.STATIC_DIR), name='static')
+
+admin_tools.create_administrator()
 
 
 @app.get("/")

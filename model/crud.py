@@ -73,7 +73,7 @@ def create_user(UserReg: schemas.UserReg, db: Session) -> dict | bool:
     return db_user
 
 
-def create_admin(db: Session, AdminReg: schemas.UserReg) -> dict:
+def create_admin(db: Session, AdminReg: schemas.UserReg) -> bool | User:
     """
     Create an admin with the information provided in the database.
     :param AdminReg: Information to sign up.
@@ -84,18 +84,12 @@ def create_admin(db: Session, AdminReg: schemas.UserReg) -> dict:
     # Check if user exists
     existing_admin = get_admin_by_name(db=db, admin_name=AdminReg.user_name)
     if existing_admin:
-        raise HTTPException(
-            status_code=409,
-            detail='User has already existed!'
-        )
+        return False
 
     # Check if email has already used.
     existing_email = db.query(User).filter(User.email == AdminReg.email).first()
     if existing_email:
-        raise HTTPException(
-            status_code=409,
-            detail='Email has already been used!'
-        )
+        return False
 
     # Generate the datetime of creating the admin.
     date = datetime.utcnow()
