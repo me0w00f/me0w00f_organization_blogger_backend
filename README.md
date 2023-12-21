@@ -14,3 +14,40 @@ To provide data management service, we create the repository of the backend.
 # Installation
 
 
+## Directly running on Linux
+
+Firstly, we have to install the python packages of the dependencies.
+```commandline
+pip install -r requirements.txt
+```
+
+Then create a file called `admin_list.json` to define the list of administrators to publish content of the organization.
+```json
+[
+  {
+    "user_name": "admin1",
+    "password": "123456",
+    "email": "admin1@gmail.com"
+  },
+  {
+    "user_name": "admin2",
+    "password": "123456",
+    "email": "admin2@gmail.com"
+  },
+  {
+    "user_name": "admin3",
+    "password": "123456",
+    "email": "admin3@gmail.com"
+  }
+]
+```
+
+It can be simply ran by uvicorn on Linux:
+```commandline
+./run.sh
+```
+
+Finally, configure proxy pass in nginx to set up the http server.
+
+## Deploy by Docker Container.
+
