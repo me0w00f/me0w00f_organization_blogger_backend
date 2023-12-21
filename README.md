@@ -21,6 +21,22 @@ Firstly, we have to install the python packages of the dependencies.
 pip install -r requirements.txt
 ```
 
+Set up a database by MariaDB,
+```commandline
+mysql -u root -p
+```
+
+```sql
+CREATE DATABASE me0w00f;
+GRANT ALL PRIVILEGES ON me0w00f.* TO 'me0w00f'@'localhost' IDENTIFIED BY 'me0w00f';
+```
+Edit the `config.py`, set the values of your database to the Database.
+```python
+......
+# Database
+DATABASE_URL = "mysql://me0w00f:me0w00f@localhost/me0w00f"
+......
+```
 Then create a file called `admin_list.json` to define the list of administrators to publish content of the organization.
 ```json
 [
