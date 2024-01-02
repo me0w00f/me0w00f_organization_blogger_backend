@@ -14,10 +14,22 @@ def get_data_of_posts_from_db(page: int, db: Session):
     Get the data of posts from the database.
     :param db: Session of the database.
     :param page: The page of the posts.
-    :return: The dict type data of posts.
+    :return: Dict type data of posts.
     """
 
-    return crud.select_all_of_posts_by_page(page=page, db=db)
+    return crud.select_all_posts_by_page(page=page, db=db)
+
+
+def get_data_of_user_posts_from_db(user_uuid: str, page: int, db: Session):
+    """
+    Get the data of a user's posts from database.
+    :param user_uuid: UUID of the user.
+    :param page: The page of the posts.
+    :param db: Session of the database.
+    :return: Dict type data of posts.
+    """
+
+    return crud.select_all_posts_of_user_by_page(user_uuid=user_uuid, page=page, db=db)
 
 
 def get_data_of_single_post_from_db(post_uuid: str, db: Session):

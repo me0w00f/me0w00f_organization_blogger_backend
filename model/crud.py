@@ -370,14 +370,14 @@ def check_post_author(author_uuid: str, post_uuid: str, db: Session):
         .filter(Posts.post_uuid == post_uuid, Posts.author_uuid == author_uuid).first()
 
 
-def select_all_of_posts_by_page(page: int, db: Session):
+def select_all_posts_by_page(page: int, db: Session):
     """
     Function to retrieve posts from the database, paginated by the given page number.
     Return 10 items of the posts by default.
     It could be decided by the `config.py`.
-    :param page:
-    :param db:
-    :return: The list type data of posts.
+    :param page: The Page.
+    :param db: Session of the database.
+    :return: List type data of posts.
     """
 
     # Get the maximum amount posts to retrieve per page from the configuration.
@@ -392,6 +392,23 @@ def select_all_of_posts_by_page(page: int, db: Session):
 
     return db.query(Posts) \
         .order_by(desc(Posts.create_time)) \
+        .limit(posts_select_limit).offset(page_db).all()
+
+
+def select_all_posts_of_user_by_page(user_uuid: str, page: int, db: Session):
+    """
+    Function to retrieve posts by user_uuid from the database, paginated by given page number.
+    :param user_uuid: UUID of the user.
+    :param page: THe Page.
+    :param db: Session of the database.
+    :return: List type data of posts.
+    """
+    posts_select_limit: int = config.RESOURCES_POSTS_LIMIT
+    page_db: int = (page - 1) * posts_select_limit
+
+    return db.query(Posts)\
+        .filter(Posts.author_uuid == user_uuid)\
+        .order_by(desc(Posts.create_time))\
         .limit(posts_select_limit).offset(page_db).all()
 
 

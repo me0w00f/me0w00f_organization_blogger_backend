@@ -12,7 +12,6 @@ from model import crud
 from pathlib import Path
 from tools import resource_tools, token_tools
 
-
 router_resources = APIRouter(
     prefix='/api/resources',
     tags=['Resources'],
@@ -40,7 +39,6 @@ def get_posts(page: int, db: Session = Depends(get_db)):
     list_for_return: list[dict] = []
 
     for x in data_from_db:
-
         author = crud.get_user_by_uuid(user_uuid=x.author_uuid, db=db)
         category_name = crud.get_category_name(category_id=x.category_id, db=db).category_name
         temp_dict: dict = {
@@ -111,7 +109,6 @@ def get_all_categories(db: Session = Depends(get_db)):
 
 @router_resources.get('/user_info/get')
 def get_user_info(token: str = Depends(oauth2Scheme), db: Session = Depends(get_db)):
-
     """
     Get information of the logged user.
     :param token: Token of user.
@@ -124,7 +121,6 @@ def get_user_info(token: str = Depends(oauth2Scheme), db: Session = Depends(get_
         crud.get_admin_by_uuid(admin_uuid=user_uuid, db=db)
 
     if not user:
-
         raise HTTPException(
             status_code=401,
             detail="Permission denied."
@@ -144,3 +140,20 @@ def get_user_info(token: str = Depends(oauth2Scheme), db: Session = Depends(get_
     }
 
     return user_info
+
+
+@router_resources.get('/posts/per_user/{page}')
+def get_all_posts_of_single_user(page: int, token: str = Depends(oauth2Scheme), db: Session = Depends(get_db)):
+    """
+    Get all the posts of one user, and limited by pages.
+    :param db: Session of the database.
+    :param page: Page of the posts list.
+    :type token: Token of the user.
+    :return: A list of posts.
+    """
+
+    user_uuid: str = token_tools.get_uuid_by_token(token=token)
+
+    return resource_tools.get_data_of_user_posts_from_db(user_uuid=user_uuid, page=page, db=db)
+
+
