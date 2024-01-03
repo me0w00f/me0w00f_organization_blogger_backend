@@ -14,7 +14,7 @@ To provide data management service, we create the repository of the backend.
 # Installation
 
 
-## Directly running on Linux
+## Quick Start: Directly running on Linux
 
 Firstly, we have to install the python packages of the dependencies.
 ```commandline
