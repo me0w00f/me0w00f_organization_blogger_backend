@@ -139,7 +139,7 @@ def update_a_post(post_uuid: str = Form(),
 
 
 @router_posts.delete('/delete')
-def delete_a_post(post_uuid: str, token: str = Depends(oauth2Scheme), db: Session = Depends(get_db)):
+def delete_a_post(post_uuid: str = Form(), token: str = Depends(oauth2Scheme), db: Session = Depends(get_db)):
     """
     Delete a post.
     :param post_uuid: Uuid of the post.
