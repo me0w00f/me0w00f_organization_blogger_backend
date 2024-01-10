@@ -1,7 +1,7 @@
 # encoding: utf-8
 # Filename: models.py
 
-from sqlalchemy import Column, INT, VARCHAR, TEXT, DATETIME, BOOLEAN, ARRAY
+from sqlalchemy import Column, INT, VARCHAR, TEXT, DATETIME, BOOLEAN, ForeignKey
 from dependencies.db import Base
 
 
@@ -25,7 +25,7 @@ class Posts(Base):
     title = Column(TEXT, nullable=False)
     author_uuid = Column(VARCHAR(36), nullable=False)
     tags = Column(TEXT, nullable=False)
-    category_id = Column(INT, nullable=False)
+    category_id = Column(INT, ForeignKey('categories.id'), nullable=False)
     comment = Column(BOOLEAN, nullable=False)
     create_time = Column(DATETIME, nullable=False)
     update_time = Column(DATETIME, nullable=False)

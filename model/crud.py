@@ -3,7 +3,7 @@
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from uuid import uuid4
 
 from model.models import User, Posts, Category, Comments
@@ -430,7 +430,21 @@ def get_all_categories_in_db(db: Session):
     :return: Return the data of all the categories.
     """
 
-    return db.query(Category.id, Category.category_name)
+    results = db.query(
+        Category.id.label("category_id"),
+        Category.category_name,
+        func.count(Posts.id).label('number_of_posts')
+    ).outerjoin(Posts, Category.id == Posts.category_id) \
+        .group_by(Category.category_name) \
+        .order_by(func.count(Posts.id).desc()).all()
+
+    # Convert to a list of dictionaries
+    categories = [
+        {"category_id": category_id, "category_name": category_name, "number_of_posts": number_of_posts}
+        for category_id, category_name, number_of_posts in results
+    ]
+
+    return categories
 
 
 def get_category_in_db(category_id: int, db: Session):
