@@ -531,3 +531,31 @@ def update_the_description_by_uuid(new_description: str, user_uuid: str, db: Ses
             status_code=500,
             detail=str(e)
         )
+
+
+def update_password(user_uuid: str, new_password: str, db: Session):
+    """
+    Update the password of a user by providing a UUID.
+    :param user_uuid: UUID of the user.
+    :param new_password: New password of the user.
+    :param db: Session of the database.
+    :return: Status of the operation.
+    """
+
+    hashed_password: str = get_password_hashed(new_password)
+
+    try:
+        status: int = db.query(User).filter(User.user_uuid == user_uuid).update(
+            {"password": hashed_password}
+        )
+
+        if status == 0:
+            return False
+
+        db.commit()
+        return True
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )

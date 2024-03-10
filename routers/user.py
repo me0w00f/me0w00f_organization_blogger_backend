@@ -103,11 +103,12 @@ def set_avatar(avatar_file: UploadFile = File(), token: str = Depends(oauth2Sche
     :param avatar_file: Avatar file uploaded.
     :param token: Token of user.
     :param db: Session of the database.
-    :return: Response of result.
+    :return: Status of the operation.
     """
 
     user_uuid = token_tools.get_uuid_by_token(token=token)
     user = crud.get_user_by_uuid(user_uuid=user_uuid, db=db)
+
     if not user:
         raise HTTPException(
             status_code=401,
@@ -130,7 +131,7 @@ def set_avatar(avatar_file: UploadFile = File(), token: str = Depends(oauth2Sche
 def modify_user_info(user_info_modified: schemas.UserModify, token: str = Depends(oauth2Scheme),
                      db: Session = Depends(get_db)):
     """
-    Modify the information of the users.
+    Modify the information of users.
     :param user_info_modified: New information of user in reuqest body.
     :param token: Token of the user for authentication.
     :param db: Session of the database.
@@ -142,3 +143,30 @@ def modify_user_info(user_info_modified: schemas.UserModify, token: str = Depend
         return {
             "Status": "Success!"
         }
+
+
+@router_user.post('/password/modify')
+def modify_user_password(password_modified: schemas.PasswordChange, token: str = Depends(oauth2Scheme),
+                         db: Session = Depends(get_db)):
+    """
+    Modify the password of users.
+    :param password_modified: New password of user in reuqest body.
+    :param token: Token of the user for authentication.
+    :param db:  Session of the database.
+    :return: Status of the operation.
+    """
+
+    user_uuid: str = token_tools.get_uuid_by_token(token=token)
+
+    if user_data_tools.password_modify(user_uuid=user_uuid, password_modified=password_modified, db=db):
+
+        return {
+            "Status": "Success!"
+        }
+
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Inconsistency between two password entries."
+        )
+

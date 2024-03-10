@@ -155,5 +155,3 @@ def get_all_posts_of_single_user(page: int, token: str = Depends(oauth2Scheme), 
     user_uuid: str = token_tools.get_uuid_by_token(token=token)
 
     return resource_tools.get_data_of_user_posts_from_db(user_uuid=user_uuid, page=page, db=db)
-
-

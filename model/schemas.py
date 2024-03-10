@@ -34,3 +34,8 @@ class UserModify(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PasswordChange(BaseModel):
+    new_password: str
+    verify_new_password: str

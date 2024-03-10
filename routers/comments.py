@@ -1,7 +1,7 @@
 # encoding: utf-8
 # Filename: comments.py
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 
 from model import schemas, crud
 from sqlalchemy.orm import Session

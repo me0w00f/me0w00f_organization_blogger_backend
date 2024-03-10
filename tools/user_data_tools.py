@@ -66,7 +66,7 @@ def update_user_info(user_uuid: str, user_info_modified: schemas.UserModify, db:
     """
     Update the nick_name and description for a user.
     :param user_uuid: UUID of the user.
-    :param user_info_modified:  New information of user in reuqest body.
+    :param user_info_modified:  New information of user in request body.
     :param db: Session of the database.
     :return: Status of the operation.
     """
@@ -77,3 +77,19 @@ def update_user_info(user_uuid: str, user_info_modified: schemas.UserModify, db:
     if crud.update_the_nick_name_by_uuid(user_uuid=user_uuid, new_nick_name=new_nick_name, db=db) and \
             crud.update_the_description_by_uuid(new_description=new_description, user_uuid=user_uuid, db=db):
         return True
+
+
+def password_modify(user_uuid: str, password_modified: schemas.PasswordChange, db: Session):
+    """
+    Update the password for a user.
+    :param user_uuid: UUID of the user.
+    :param password_modified: New password of the user in request body.
+    :param db: Session of the database.
+    :return: Status of the operation.
+    """
+
+    if password_modified.new_password == password_modified.verify_new_password:
+        if crud.update_password(user_uuid=user_uuid, new_password=password_modified.new_password, db=db):
+            return True
+
+    return False
