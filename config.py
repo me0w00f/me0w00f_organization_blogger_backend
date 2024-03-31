@@ -5,6 +5,7 @@
 # Main
 
 STATIC_DIR = 'static'
+LOG_DIR = './log/blogger_backend'
 
 # Database
 DATABASE_URL = "mysql://me0w00f:me0w00f@localhost/me0w00f"
