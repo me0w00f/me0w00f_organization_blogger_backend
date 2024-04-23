@@ -115,8 +115,11 @@ def get_user_info(token: str = Depends(oauth2Scheme), db: Session = Depends(get_
     :param db: Session of database.
     :return: Data of the logged user.
     """
+    try:
+        user_uuid = token_tools.get_uuid_by_token(token=token)
+    except ValueError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
-    user_uuid = token_tools.get_uuid_by_token(token=token)
     user = crud.get_user_by_uuid(user_uuid=user_uuid, db=db) if crud.get_user_by_uuid(user_uuid=user_uuid, db=db) else \
         crud.get_admin_by_uuid(admin_uuid=user_uuid, db=db)
 
