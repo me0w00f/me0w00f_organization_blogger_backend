@@ -25,6 +25,7 @@ class Posts(Base):
     title = Column(TEXT, nullable=False)
     author_uuid = Column(VARCHAR(36), nullable=False)
     tags = Column(TEXT, nullable=False)
+    cover_url = Column(VARCHAR(255), nullable=True)
     category_id = Column(INT, ForeignKey('categories.id'), nullable=False)
     comment = Column(BOOLEAN, nullable=False)
     create_time = Column(DATETIME, nullable=False)

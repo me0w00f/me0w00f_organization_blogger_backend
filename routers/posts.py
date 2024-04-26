@@ -27,11 +27,13 @@ def create_a_post(posts_title: str = Form(),
                   tags: str = Form(),
                   category_id: int = Form(),
                   comment: bool = Form(),
+                  cover_url: str = Form(),
                   content_file: UploadFile = File(),
                   token: str = Depends(oauth2Scheme),
                   db: Session = Depends(get_db)):
     """
     * Send a post with a file.
+    * :param cover_url: URL of the cover.
     * :param posts_title: Title of the post.
     * :param tags: Tags of the post.
     * :param category_id: Category of the post.
@@ -71,7 +73,7 @@ def create_a_post(posts_title: str = Form(),
         )
 
     if crud.create_post(post_uuid=post_uuid, posts_title=posts_title, tags=tags,
-                        comment=comment, category_id=category_id, user_uuid=author_uuid, db=db):
+                        comment=comment, category_id=category_id, user_uuid=author_uuid, cover_url=cover_url, db=db):
         return {
             "Status": "Success!"
         }
@@ -80,6 +82,7 @@ def create_a_post(posts_title: str = Form(),
 @router_posts.put('/update')
 def update_a_post(post_uuid: str = Form(),
                   posts_title: str = Form(),
+                  cover_url: str = Form(),
                   tags: str = Form(),
                   category_id: int = Form(),
                   comment: bool = Form(),
@@ -88,6 +91,7 @@ def update_a_post(post_uuid: str = Form(),
                   db: Session = Depends(get_db)):
     """
     * Update a post with new information and a file.
+    * :param cover_url: URL of the cover.
     * :param post_uuid: Uuid of the post.
     * :param posts_title: Title of the post.
     * :param tags: Tags of the post.
@@ -132,7 +136,7 @@ def update_a_post(post_uuid: str = Form(),
         )
 
     if crud.update_post(post_uuid=post_uuid, user_uuid=author_uuid, posts_title=posts_title,
-                        tags=tags, category_id=category_id, comment=comment, db=db):
+                        tags=tags, category_id=category_id, comment=comment, cover_url=cover_url, db=db):
         return {
             "Status": "Success!"
         }

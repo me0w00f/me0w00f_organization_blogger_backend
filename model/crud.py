@@ -128,9 +128,10 @@ def create_admin(db: Session, AdminReg: schemas.UserReg) -> bool | User:
 
 
 def create_post(post_uuid: str, user_uuid: str, posts_title: str, tags: str, category_id: int,
-                comment: bool, db: Session):
+                comment: bool, cover_url: str, db: Session):
     """
     Create a data of a post in the database.
+    :param cover_url: URL of the cover.
     :param post_uuid: Uuid of the post.
     :param user_uuid: Uuid of the user.
     :param posts_title: Title of the post.
@@ -149,6 +150,7 @@ def create_post(post_uuid: str, user_uuid: str, posts_title: str, tags: str, cat
         author_uuid=user_uuid,
         category_id=category_id,
         tags=tags,
+        cover_url=cover_url,
         comment=comment,
         create_time=date,
         update_time=date
@@ -170,9 +172,10 @@ def create_post(post_uuid: str, user_uuid: str, posts_title: str, tags: str, cat
 
 
 def update_post(post_uuid: str, user_uuid: str, posts_title: str, tags: str, category_id: int,
-                comment: bool, db: Session):
+                comment: bool, cover_url: str, db: Session):
     """
     Update a post.
+    :param cover_url: URL of the cover.
     :param post_uuid: Uuid of the post.
     :param user_uuid: Uuid of the user.
     :param posts_title: Title of the post.
@@ -192,6 +195,7 @@ def update_post(post_uuid: str, user_uuid: str, posts_title: str, tags: str, cat
                 'title': posts_title,
                 'tags': tags,
                 'category_id': category_id,
+                'cover_url': cover_url,
                 'comment': comment,
                 'update_time': update_date
             },
