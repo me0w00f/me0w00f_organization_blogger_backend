@@ -23,3 +23,8 @@ router_admin = APIRouter(
 @router_admin.get('/users/get')
 def get_all_users():
     pass
+
+
+@router_admin.get('/status')
+def status() -> None:
+    pass

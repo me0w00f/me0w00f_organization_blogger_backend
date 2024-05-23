@@ -7,7 +7,7 @@ Main entrance.
 The main execution of the project.
 
 """
-
+import uvicorn
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -54,3 +54,5 @@ def root():
             "Server date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
     }
+
+

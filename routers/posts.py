@@ -8,7 +8,6 @@ from dependencies.db import get_db
 from dependencies.oauth2scheme import oauth2Scheme
 from tools import posts_tools, token_tools, file_tools
 from model import crud, schemas
-import config
 
 router_posts = APIRouter(
     prefix='/api/posts',
