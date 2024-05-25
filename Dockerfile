@@ -1,5 +1,5 @@
 # Use the official Python image with tag 3.11.8 as the base image
-FROM python:3.11.8-slim
+FROM python:3.12.3-slim
 
 # Install system dependencies needed for building mysqlclient
 RUN apt-get update \
